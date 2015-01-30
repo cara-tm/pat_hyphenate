@@ -458,7 +458,7 @@ function pat_hyphenate_prefs($event, $step, $rs = '') {
 
 	global $message, $plugins_ver, $ok;
 
-	$link = tag(gTxt('edit'), 'a', ' href="index.php?event=prefs&step=advanced_prefs" class="publish navlink"');
+	$link = tag(gTxt('edit'), 'a', ' href="index.php?event=prefs&step=advanced_prefs#prefs-pat_hyp_transaction" class="publish navlink"');
 
 	pagetop(gTxt('edit_preferences') . ' &#8250; pat_hyphenate', $message);
 	$default_prefs = pat_hyphenate_defaults();
