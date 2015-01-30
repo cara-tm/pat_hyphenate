@@ -212,26 +212,6 @@ if (@txpinterface == 'admin') {
 }
 
 /**
- * Initiate all plugin variables.
- * @param
-
-function pat_hyphenate_get_datas($event, $step)
-{
-	if ($step == 'enabled') {
-
-		// Set defaults
-		if(!isset($GLOBALS['pat_hyp_hyphen'])) $GLOBALS['pat_hyp_hyphen'] = $prefs['pat_hyp_hyphen'];
-		if(!isset($GLOBALS['leftmin'])) $GLOBALS['leftmin'] = $prefs['pat_hyp_leftmin'];
-		if(!isset($GLOBALS['rightmin'])) $GLOBALS['rightmin'] = $prefs['pat_hyp_rightmax'];
-		if(!isset($GLOBALS['charmin'])) $GLOBALS['charmin'] = $prefs['pat_hyp_charmin'];
-		if(!isset($GLOBALS['charmax'])) $GLOBALS['charmax'] = $prefs['pat_hyp_charmax'];
-		if(!isset($GLOBALS['pat_hyp_exclude_tags'])) $GLOBALS['pat_hyp_exclude_tags'] = array('code', 'pre', 'script', 'style');
-	}
-
-}
-*/
-
-/**
  * Initiate all plugin functions.
  * @param
  */
