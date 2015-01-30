@@ -28,16 +28,15 @@ function pat_hyphenate($atts) {
 	), $atts));
 
 	$text = $thisarticle[$content];
+	$hyphenate_ready = true;
 
 	if ( $content === 'body' || $content === 'excerpt')  {
 
-		if ( preg_match('/^([a-z]{2}-[a-z]{2})$/', $lang) )
+		if ( !preg_match('/^([a-z]{2}-[a-z]{2})$/', $lang) )
 			$hyphenate_ready = false;
 
 		if ( preg_match('/(^[<]).*(^[>])$/', $prefs['pat_hyp_exclude_tags']) )
 			$hyphenate_ready = false;
-
-		$hyphenate_ready = true;
 
 		// Sets global variables for hyphenation() function.
 		$GLOBALS['pat_hyp_language'] = $lang;
@@ -123,8 +122,6 @@ function pat_hyphenate($atts) {
 
 	// Word hyphenation.
 	function word_hyphenation($word) {
-		// GET DATA
-		pat_hyphenate_get_datas();
 		if(mb_strlen($word) < $GLOBALS['charmin'])
 			return $word;
 		if(mb_strpos($word, $GLOBALS['pat_hyp_hyphen']) !== false)
@@ -217,9 +214,10 @@ if (@txpinterface == 'admin') {
 /**
  * Initiate all plugin variables.
  * @param
- */
-function pat_hyphenate_get_datas()
+
+function pat_hyphenate_get_datas($event, $step)
 {
+	if ($step == 'enabled') {
 
 		// Set defaults
 		if(!isset($GLOBALS['pat_hyp_hyphen'])) $GLOBALS['pat_hyp_hyphen'] = $prefs['pat_hyp_hyphen'];
@@ -228,9 +226,10 @@ function pat_hyphenate_get_datas()
 		if(!isset($GLOBALS['charmin'])) $GLOBALS['charmin'] = $prefs['pat_hyp_charmin'];
 		if(!isset($GLOBALS['charmax'])) $GLOBALS['charmax'] = $prefs['pat_hyp_charmax'];
 		if(!isset($GLOBALS['pat_hyp_exclude_tags'])) $GLOBALS['pat_hyp_exclude_tags'] = array('code', 'pre', 'script', 'style');
+	}
 
 }
-
+*/
 
 /**
  * Initiate all plugin functions.
@@ -310,20 +309,23 @@ function pat_hyphenate_init() {
 	register_tab('extensions', 'pat_hyphenate_options', pat_hyphenate_gTxt('pat_hyphenate_options'));
 	register_callback('pat_hyphenate_options', 'pat_hyphenate_options');
 
-	 // Tab for pat_hyphenate_options: Everyone can access.
-	add_privs('pat_hyphenate_options', '1, 2, 3, 4, 5, 6');
+	// $event & $step for default plugin datas
+	//register_callback('pat_hyphenate_get_datas', 'pat_hyphenate_prefs')
 
 	// Lifecycle for installation
 	register_callback('pat_hyphenate_prefs_lifecycle', 'plugin_lifecycle.pat_hyphenate');
+
+	 // Tab for pat_hyphenate_options: Everyone can access.
+	add_privs('pat_hyphenate_options', '1, 2, 3, 4, 5, 6');
 
 	// Emit additional CSS rules for the admin side.
 	if ($event == 'pat_hyphenate_options' || $event == 'pat_hyphenate_admin' || $event == 'plugin_prefs.pat_hyphenate')
 	register_callback('pat_hyphenate_style', 'admin_side', 'head_end');
 
-	if ( is_dir('_hyphenator') === false ) {
+	if ( is_dir(txpath.'/_hyphenator') === false ) {
 		$ok = false;
 		$message = pat_hyphenate_gTxt('pat_hyphenate_open_directory_failure');
-	} elseif ( file_exists('_hyphenator/dictionary-'.LANG.'.txt') === false ) {
+	} elseif ( file_exists(txpath.'/_hyphenator/dictionary-'.LANG.'.txt') === false ) {
 		$ok = false;
 		$message = pat_hyphenate_gTxt('pat_hyphenate_create_file_done');
 	} else {
@@ -363,13 +365,12 @@ function pat_hyphenate_admin($event, $step, $rs = '') {
 	pat_hyphenate_verify_dictionary(LANG);
 
 	// The tab content.
-
 	// Thanks lot CEBE for this 'save' step ;)
 	if ( $step == 'save' ) {
 		// Get dictionary content.
 		$dictionary = ps('dictionary');
 		// Save dictionary new content accordingly to back-office's language.
-		$rs = pat_hyphenate_add($dictionary, '_hyphenator/dictionary-'.LANG.'.txt');
+		$rs = pat_hyphenate_add($dictionary, txpath.'/_hyphenator/dictionary-'.LANG.'.txt');
 		// Display a success message.
 		$message = ( ps('pat_hyphenate_submit') ? pat_hyphenate_gTxt('pat_hyphenate_dictionary_saved') : '' );
 	}
@@ -383,7 +384,7 @@ function pat_hyphenate_admin($event, $step, $rs = '') {
 			.tag(pat_hyphenate_gTxt('pat_hyphenate_personal_dictionary').' ('.LANG.')', 'h1');
 
 		// Load dictionary accordingly to back-office's language.
-		$the_file = '_hyphenator/dictionary-'.LANG.'.txt';
+		$the_file = txpath.'/_hyphenator/dictionary-'.LANG.'.txt';
 		$dictionary = file_get_contents($the_file);
 
 		// The write box.
@@ -797,6 +798,16 @@ function pat_hyphenate_prefs_lifecycle($event, $step)
 			safe_delete($table, "name LIKE '".str_replace('_', '\_', $row)."\_%'");
 			safe_repair($table);
 		}
+
+	} elseif ($step == 'enabled') {
+
+		// Set defaults
+		if(!isset($GLOBALS['pat_hyp_hyphen'])) $GLOBALS['pat_hyp_hyphen'] = $prefs['pat_hyp_hyphen'];
+		if(!isset($GLOBALS['leftmin'])) $GLOBALS['leftmin'] = $prefs['pat_hyp_leftmin'];
+		if(!isset($GLOBALS['rightmin'])) $GLOBALS['rightmin'] = $prefs['pat_hyp_rightmax'];
+		if(!isset($GLOBALS['charmin'])) $GLOBALS['charmin'] = $prefs['pat_hyp_charmin'];
+		if(!isset($GLOBALS['charmax'])) $GLOBALS['charmax'] = $prefs['pat_hyp_charmax'];
+		if(!isset($GLOBALS['pat_hyp_exclude_tags'])) $GLOBALS['pat_hyp_exclude_tags'] = array('code', 'pre', 'script', 'style');
 
 	}
 
