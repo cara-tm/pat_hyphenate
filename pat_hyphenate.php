@@ -11,6 +11,17 @@
 */
 
 
+/**
+ * This plugin tags registry
+ *
+ */
+if (class_exists('\Textpattern\Tag\Registry')) {
+	Txp::get('Textpattern_Tag_Registry')
+ 		->register('pat_hyphenate');
+ 	}
+ }
+
+
 /* **************** Public side **************** */
 
 /**
