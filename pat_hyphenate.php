@@ -677,7 +677,7 @@ function pat_hyphenate_check_version($response, $pat_license = NULL) {
 	if (has_privs('plugin_prefs.pat_hyphenate')) {
 		$pat_hyphenate_remote_version = trim( PAT_HYPHENATE_REMOTE_VERSION );
 		if ( version_compare( $plugins_ver['pat_hyphenate'], $pat_hyphenate_remote_version, '<' ) )
-			return ( $pat_license ? $response.' '.href( gTxt('pat_hyphenate_download_link_title'), 'http://pat-hyphenate.cara-tm.com/decoder/?/'.$pat_license, ' title=" '.gTxt('pat_hyphenate_tooltip').' " target="_blank"' ) : '' );
+			return ( $pat_license ? $response.' '.href( gTxt('pat_hyphenate_download_link_title'), 'http://pat-hyphenate.cara-tm.com/decoder.php?id='.$pat_license, ' title=" '.gTxt('pat_hyphenate_tooltip').' " target="_blank"' ) : '' );
 		else
 			return;
 	}
